@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "486377372055",
+    "project_id": "kana-path",
+    "storage_bucket": "kana-path.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:486377372055:android:0bce03cb56a4f9b16f6cd2",
+        "android_client_info": {
+          "package_name": "com.thanmaydr1.kanapath"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlmKPCKwbUWxqKC-vDJrN3za6HD5FGZpE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

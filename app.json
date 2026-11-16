@@ -1,0 +1,70 @@
+{
+  "expo": {
+    "name": "Kana Path",
+    "slug": "kana-path",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "kanapath",
+    "icon": "./assets/kana-path-icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.thanmaydr1.kanapath",
+      "versionCode": 3,
+      "googleServicesFile": "./google-services.json",
+      "icon": "./assets/kana-path-icon.png",
+      "adaptiveIcon": {
+        "backgroundColor": "#16463E",
+        "foregroundImage": "./assets/kana-path-icon.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "splash": {
+      "image": "./assets/kana-path-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F8FAFC"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-sqlite",
+      "expo-router",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#0D5247",
+          "defaultChannel": "study-reminders"
+        }
+      ],
+      "expo-web-browser",
+      [
+        "expo-quick-actions/icon/plugin",
+        {
+          "afternoon": { "image": "./assets/kana-path-afternoon-icon.png" },
+          "evening": { "image": "./assets/kana-path-evening-icon.png" },
+          "night": { "image": "./assets/kana-path-night-icon.png" },
+          "streak": { "image": "./assets/kana-path-streak-icon.png" },
+          "legendary": { "image": "./assets/kana-path-legendary-icon.png" }
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "d474e4bd-dcfe-4df9-a1b3-7bdf541d9510"
+      }
+    },
+    "owner": "thanmaydr1"
+  }
+}
