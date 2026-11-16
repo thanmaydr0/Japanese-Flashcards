@@ -36,7 +36,7 @@ function AppNavigation() {
         }}
       >
         <Stack.Screen name="index" />
-        <Stack.Screen name="(tabs)" options={{ title: 'Kana Path' }}>
+        <Stack.Screen name="(tabs)" options={{ title: 'Japy', headerShown: true }}>
           <Stack.Header style={{ backgroundColor: theme.bg, shadowColor: 'transparent' }} />
           <Stack.Toolbar placement="right" tintColor={theme.ink}>
             <Stack.Toolbar.Button

@@ -1,6 +1,6 @@
-# Kana Path
+# Japy
 
-Kana Path is an Expo app for learning hiragana and katakana from the beginning. It builds a daily plan around the learner’s available study time, then adjusts the completion estimate as practice results come in.
+Japy is an Expo app for learning hiragana and katakana from the beginning. It builds a daily plan around the learner’s available study time, then adjusts the completion estimate as practice results come in.
 
 ## Run the app
 

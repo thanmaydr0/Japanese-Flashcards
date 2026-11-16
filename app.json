@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Kana Path",
+    "name": "Japy",
     "slug": "kana-path",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -12,7 +12,7 @@
     },
     "android": {
       "package": "com.thanmaydr1.kanapath",
-      "versionCode": 3,
+      "versionCode": 4,
       "googleServicesFile": "./google-services.json",
       "icon": "./assets/kana-path-icon.png",
       "adaptiveIcon": {
@@ -20,11 +20,6 @@
         "foregroundImage": "./assets/kana-path-icon.png"
       },
       "predictiveBackGestureEnabled": false
-    },
-    "splash": {
-      "image": "./assets/kana-path-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#F8FAFC"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -44,11 +39,30 @@
       [
         "expo-quick-actions/icon/plugin",
         {
-          "afternoon": { "image": "./assets/kana-path-afternoon-icon.png" },
-          "evening": { "image": "./assets/kana-path-evening-icon.png" },
-          "night": { "image": "./assets/kana-path-night-icon.png" },
-          "streak": { "image": "./assets/kana-path-streak-icon.png" },
-          "legendary": { "image": "./assets/kana-path-legendary-icon.png" }
+          "afternoon": {
+            "image": "./assets/kana-path-afternoon-icon.png"
+          },
+          "evening": {
+            "image": "./assets/kana-path-evening-icon.png"
+          },
+          "night": {
+            "image": "./assets/kana-path-night-icon.png"
+          },
+          "streak": {
+            "image": "./assets/kana-path-streak-icon.png"
+          },
+          "legendary": {
+            "image": "./assets/kana-path-legendary-icon.png"
+          }
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/kana-path-icon.png",
+          "imageWidth": 180,
+          "resizeMode": "contain",
+          "backgroundColor": "#F8FAFC"
         }
       ]
     ],

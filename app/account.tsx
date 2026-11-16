@@ -160,7 +160,7 @@ export default function AccountScreen() {
       </Pressable>
 
       <View style={styles.header}>
-        <Eyebrow color={theme.forest}>YOUR KANA PATH</Eyebrow>
+        <Eyebrow color={theme.forest}>YOUR JAPY ACCOUNT</Eyebrow>
         <Text style={[styles.title, { color: theme.ink }]}>
           {mode === 'create' ? 'Create your account' : 'Welcome back'}
         </Text>

@@ -1,3 +1,5 @@
+/* global Buffer, __dirname */
+
 const fs = require('fs');
 const path = require('path');
 const zlib = require('zlib');

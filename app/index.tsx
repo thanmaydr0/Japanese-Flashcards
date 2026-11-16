@@ -50,7 +50,7 @@ export default function WelcomeScreen() {
       <View style={styles.brandHeader}>
         <AppMark />
         <View>
-          <Text style={[styles.brandTitle, { color: theme.ink }]}>Kana Path</Text>
+          <Text style={[styles.brandTitle, { color: theme.ink }]}>Japy</Text>
           <Text style={[styles.brandSubtitle, { color: theme.muted }]}>Japanese Reading & Writing</Text>
         </View>
       </View>

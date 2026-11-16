@@ -144,7 +144,7 @@ export default function TodayScreen() {
         <View style={[ui.row, ui.gap12]}>
           <AppMark />
           <View>
-            <Text style={[styles.brandTitle, { color: theme.ink }]}>Kana Path</Text>
+            <Text style={[styles.brandTitle, { color: theme.ink }]}>Japy</Text>
             <View style={[ui.row, ui.gap6]}>
               <Calendar size={12} color={theme.muted} />
               <Text style={[styles.dateSubtitle, { color: theme.muted }]}>{formattedDate}</Text>

@@ -62,7 +62,7 @@ export default function AuthCallbackScreen() {
     <Page contentStyle={styles.page}>
       <Surface style={styles.card}>
         <View style={styles.copy}>
-          <Eyebrow color={theme.forest}>YOUR KANA PATH</Eyebrow>
+          <Eyebrow color={theme.forest}>YOUR JAPY ACCOUNT</Eyebrow>
           <Text style={[styles.title, { color: theme.ink }]}>
             {failed ? 'Email confirmation' : 'Finishing sign-up'}
           </Text>
