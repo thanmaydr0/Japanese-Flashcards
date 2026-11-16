@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { AppState } from 'react-native';
+import { AppState, Pressable, Text } from 'react-native';
 import { router, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -36,17 +36,34 @@ function AppNavigation() {
         }}
       >
         <Stack.Screen name="index" />
-        <Stack.Screen name="(tabs)" options={{ title: 'Japy', headerShown: true }}>
-          <Stack.Header style={{ backgroundColor: theme.bg, shadowColor: 'transparent' }} />
-          <Stack.Toolbar placement="right" tintColor={theme.ink}>
-            <Stack.Toolbar.Button
-              accessibilityLabel="Open profile and settings"
-              onPress={() => router.push('/(tabs)/profile' as never)}
-            >
-              Profile
-            </Stack.Toolbar.Button>
-          </Stack.Toolbar>
-        </Stack.Screen>
+        <Stack.Screen
+          name="(tabs)"
+          options={{
+            title: 'Japy',
+            headerShown: true,
+            headerStyle: { backgroundColor: theme.bg },
+            headerTintColor: theme.ink,
+            headerShadowVisible: false,
+            headerRight: () => (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Open profile and settings"
+                hitSlop={8}
+                onPress={() => router.push('/(tabs)/profile' as never)}
+                style={({ pressed }) => ({
+                  minHeight: 44,
+                  justifyContent: 'center',
+                  paddingHorizontal: 12,
+                  opacity: pressed ? 0.65 : 1,
+                })}
+              >
+                <Text style={{ color: theme.ink, fontSize: 14, fontWeight: '700' }}>
+                  Profile
+                </Text>
+              </Pressable>
+            ),
+          }}
+        />
         <Stack.Screen name="account" />
         <Stack.Screen name="auth-callback" />
       </Stack>

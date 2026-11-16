@@ -12,7 +12,7 @@
     },
     "android": {
       "package": "com.thanmaydr1.kanapath",
-      "versionCode": 5,
+      "versionCode": 6,
       "googleServicesFile": "./google-services.json",
       "icon": "./assets/kana-path-icon.png",
       "adaptiveIcon": {
