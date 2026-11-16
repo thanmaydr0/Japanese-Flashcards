@@ -3,6 +3,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2.119.0';
 import { corsHeaders } from 'npm:@supabase/supabase-js@2.119.0/cors';
 
 type LearnerSnapshot = {
+  focusModeEnabled?: boolean;
   dailyMinutes: number;
   accuracy: number;
   focus: 'hiragana' | 'katakana';
@@ -59,6 +60,7 @@ Deno.serve(async (request) => {
   }
 
   const focus = body.focus === 'katakana' ? 'katakana' : body.focus === 'hiragana' ? 'hiragana' : null;
+  const focusModeEnabled = body.focusModeEnabled === true;
   const accuracy = Number(body.accuracy);
   const dailyMinutes = Number(body.dailyMinutes);
   const totalAnswers = Number(body.totalAnswers);
@@ -94,8 +96,11 @@ Deno.serve(async (request) => {
       body: JSON.stringify({
         model,
         store: false,
-        system_instruction: 'You are a kind Japanese kana tutor for a complete beginner. Write one short, practical next-study action in plain English, under 18 words. Fit it to the learner’s available time and recent progress. When recent misses exist, prioritize the most repeated script and reading or writing mode; otherwise recommend a small next step. Use only supplied facts. Never mention AI, models, APIs, or learner profiling. Do not promise perfection or invent feelings. Return one sentence only.',
+        system_instruction: focusModeEnabled
+          ? 'You are a kind Japanese kana tutor for a complete beginner using a focus-friendly setting. Suggest exactly one concrete next action that can be started now, preferably one five-card round, in plain English and under 18 words. Keep the tone calm and non-judgmental. Never use streaks, urgency, guilt, or pressure. Fit it to the learner’s available time and recent progress. When recent misses exist, prioritize the most repeated script and reading or writing mode; otherwise recommend a small next step. Use only supplied facts. Never mention AI, models, APIs, learner profiling, or ADHD. Do not promise perfection or invent feelings. Return one sentence only.'
+          : 'You are a kind Japanese kana tutor for a complete beginner. Write one short, practical next-study action in plain English, under 18 words. Fit it to the learner’s available time and recent progress. When recent misses exist, prioritize the most repeated script and reading or writing mode; otherwise recommend a small next step. Use only supplied facts. Never mention AI, models, APIs, or learner profiling. Do not promise perfection or invent feelings. Return one sentence only.',
         input: JSON.stringify({
+          focus_mode_enabled: focusModeEnabled,
           daily_minutes: Math.round(dailyMinutes),
           recent_accuracy_percent: Math.round(accuracy),
           focus_script: focus,

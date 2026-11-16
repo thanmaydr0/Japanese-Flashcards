@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, Switch, Text, View } from 'react-native';
 import {
   Award,
   BarChart3,
@@ -39,8 +39,8 @@ function localKey(date: Date) {
 }
 
 export default function PaceScreen() {
-  const { state, changeDailyMinutes, resetProgress } = useLearning();
-  const { theme } = useTheme();
+  const { state, changeDailyMinutes, resetProgress, setAdhdModeEnabled } = useLearning();
+  const { theme, isDark } = useTheme();
   const [confirmReset, setConfirmReset] = useState(false);
   const counts = masteryCounts(state);
   const estimate = getPlanEstimate(state);
@@ -94,6 +94,27 @@ export default function PaceScreen() {
       </View>
 
       <AccountAndReminders />
+
+      <View style={styles.sectionContainer}>
+        <SectionTitle title="Study Support" />
+        <Surface style={styles.focusModeCard}>
+          <View style={styles.focusModeHeader}>
+            <View style={styles.focusModeCopy}>
+              <Text style={[styles.focusModeTitle, { color: theme.ink }]}>ADHD mode</Text>
+              <Text style={[styles.focusModeDescription, { color: theme.muted }]}>A calmer study flow with one clear next step and short five-card practice rounds.</Text>
+            </View>
+            <Switch
+              accessibilityLabel="ADHD mode"
+              accessibilityHint="Simplifies the Today screen and adds short, optional practice rounds. This is a display and study preference, not a diagnosis."
+              value={state.adhdModeEnabled}
+              onValueChange={setAdhdModeEnabled}
+              trackColor={{ false: theme.line, true: theme.forestBorder }}
+              thumbColor={state.adhdModeEnabled ? theme.forest : (isDark ? '#334155' : '#FFFFFF')}
+            />
+          </View>
+          <Text style={[styles.focusModePrivacy, { color: theme.faint }]}>This preference is saved with your learning settings. It does not record an ADHD diagnosis.</Text>
+        </Surface>
+      </View>
 
       <View style={styles.sectionContainer}>
         <SectionTitle title="Appearance" />
@@ -358,6 +379,31 @@ const styles = StyleSheet.create({
   },
   sectionContainer: {
     marginTop: 16,
+  },
+  focusModeCard: {
+    padding: 16,
+    gap: 10,
+  },
+  focusModeHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  focusModeCopy: {
+    flex: 1,
+    gap: 4,
+  },
+  focusModeTitle: {
+    fontSize: 15,
+    fontWeight: '800',
+  },
+  focusModeDescription: {
+    fontSize: 12,
+    lineHeight: 17,
+  },
+  focusModePrivacy: {
+    fontSize: 10,
+    lineHeight: 14,
   },
   chartCard: {
     padding: 16,

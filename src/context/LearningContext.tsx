@@ -7,7 +7,9 @@ import { loadLearningState, saveLearningState } from '../lib/storage';
 type LearningContextValue = {
   state: LearningState;
   loaded: boolean;
+  adhdModeRevision: number;
   completeSetup: (minutes: number) => void;
+  setAdhdModeEnabled: (enabled: boolean) => void;
   changeDailyMinutes: (minutes: number) => void;
   setPreferredScript: (script: Script) => void;
   gradeCard: (card: StudyCard, mode: StudyMode, correct: boolean) => void;
@@ -20,6 +22,7 @@ const LearningContext = createContext<LearningContextValue | null>(null);
 export function LearningProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<LearningState>(INITIAL_STATE);
   const [loaded, setLoaded] = useState(false);
+  const [adhdModeRevision, setAdhdModeRevision] = useState(0);
   const stateRef = useRef(INITIAL_STATE);
   const syncTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -67,6 +70,12 @@ export function LearningProvider({ children }: { children: React.ReactNode }) {
     });
   }, [commit, state]);
 
+  const setAdhdModeEnabled = useCallback((enabled: boolean) => {
+    const current = stateRef.current;
+    if (current.adhdModeEnabled !== enabled) setAdhdModeRevision((revision) => revision + 1);
+    commit({ ...current, adhdModeEnabled: enabled });
+  }, [commit]);
+
   const changeDailyMinutes = useCallback((minutes: number) => {
     commit({ ...state, dailyMinutes: minutes });
   }, [commit, state]);
@@ -80,13 +89,15 @@ export function LearningProvider({ children }: { children: React.ReactNode }) {
   }, [commit, state]);
 
   const resetProgress = useCallback(() => {
+    const current = stateRef.current;
     commit({
       ...INITIAL_STATE,
       setupCompleted: true,
-      dailyMinutes: state.dailyMinutes,
+      adhdModeEnabled: current.adhdModeEnabled,
+      dailyMinutes: current.dailyMinutes,
       startedAt: Date.now(),
     });
-  }, [commit, state.dailyMinutes]);
+  }, [commit]);
 
   const refreshCloudProgress = useCallback(async () => {
     const snapshot = await loadCloudLearningSnapshot();
@@ -102,14 +113,16 @@ export function LearningProvider({ children }: { children: React.ReactNode }) {
     () => ({
       state,
       loaded,
+      adhdModeRevision,
       completeSetup,
+      setAdhdModeEnabled,
       changeDailyMinutes,
       setPreferredScript,
       gradeCard,
       resetProgress,
       refreshCloudProgress,
     }),
-    [state, loaded, completeSetup, changeDailyMinutes, setPreferredScript, gradeCard, resetProgress, refreshCloudProgress]
+    [state, loaded, adhdModeRevision, completeSetup, setAdhdModeEnabled, changeDailyMinutes, setPreferredScript, gradeCard, resetProgress, refreshCloudProgress]
   );
 
   return <LearningContext.Provider value={value}>{children}</LearningContext.Provider>;

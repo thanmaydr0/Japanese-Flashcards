@@ -18,6 +18,7 @@ export async function syncLearningState(state: LearningState) {
 
   const { error: settingsError } = await supabase.from('learner_settings').upsert({
     user_id: user.id,
+    focus_mode_enabled: state.adhdModeEnabled,
     daily_goal_minutes: state.dailyMinutes,
     preferred_script: state.preferredScript,
     onboarding_completed: state.setupCompleted,
@@ -52,6 +53,7 @@ export async function syncLearningState(state: LearningState) {
 }
 
 export type CloudLearningSnapshot = {
+  adhdModeEnabled: boolean;
   dailyMinutes: number;
   preferredScript: Script;
   setupCompleted: boolean;
@@ -104,6 +106,7 @@ export async function loadCloudLearningSnapshot(): Promise<CloudLearningSnapshot
     const startedAt = Date.parse(settingsResult.data.created_at);
     const updatedAt = Date.parse(settingsResult.data.updated_at);
     return {
+      adhdModeEnabled: settingsResult.data.focus_mode_enabled === true,
       dailyMinutes: settingsResult.data.daily_goal_minutes,
       preferredScript: settingsResult.data.preferred_script,
       setupCompleted: settingsResult.data.onboarding_completed,
@@ -134,6 +137,7 @@ export function mergeCloudLearningState(local: LearningState, cloud: CloudLearni
   return {
     ...local,
     setupCompleted: local.setupCompleted || cloud.setupCompleted,
+    adhdModeEnabled: remoteIsNewer ? cloud.adhdModeEnabled : local.adhdModeEnabled,
     dailyMinutes: remoteIsNewer ? cloud.dailyMinutes : local.dailyMinutes,
     preferredScript: remoteIsNewer ? cloud.preferredScript : local.preferredScript,
     startedAt: local.startedAt ?? cloud.startedAt,
@@ -159,6 +163,7 @@ export async function askForStudyNudge(state: LearningState) {
     const focus = (weakScript.katakana ?? 0) > (weakScript.hiragana ?? 0) ? 'katakana' : 'hiragana';
     const { data, error } = await supabase.functions.invoke('practice-coach', {
       body: {
+        focusModeEnabled: state.adhdModeEnabled,
         dailyMinutes: state.dailyMinutes,
         accuracy: recent.length ? Math.round((correct / recent.length) * 100) : 0,
         focus,

@@ -11,7 +11,7 @@ type PushDevice = {
   last_nudge_at: string | null;
 };
 
-type LearnerSettings = { user_id: string; streak_days: number; updated_at: string };
+type LearnerSettings = { user_id: string; streak_days: number; focus_mode_enabled: boolean; updated_at: string };
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -104,8 +104,13 @@ async function firebaseAccessToken() {
   return tokenResponse.access_token;
 }
 
-async function sendFirebaseMessage(device: PushDevice, token: string, projectId: string, streak: number) {
-  const copy = streak >= 7
+async function sendFirebaseMessage(device: PushDevice, token: string, projectId: string, streak: number, focusModeEnabled: boolean) {
+  const copy = focusModeEnabled
+    ? {
+        title: 'A small Japy step is ready',
+        body: 'Try one short round of five kana cards. You can stop whenever you like.',
+      }
+    : streak >= 7
     ? {
         title: 'Your fox is doing a victory dance 🦊',
         body: `Keep that ${streak}-day streak glowing with a tiny kana session.`,
@@ -163,7 +168,7 @@ Deno.serve(async (request) => {
       const userIds = [...new Set(devices.map((device) => device.user_id))];
       const { data: settings, error: settingsError } = await admin
         .from('learner_settings')
-        .select('user_id,streak_days,updated_at')
+        .select('user_id,streak_days,focus_mode_enabled,updated_at')
         .in('user_id', userIds);
       if (settingsError) throw settingsError;
       const byUser = new Map((settings ?? []).map((row) => [row.user_id, row as LearnerSettings]));
@@ -180,7 +185,8 @@ Deno.serve(async (request) => {
         const batch = due.slice(index, index + 40);
         await Promise.all(batch.map(async (device) => {
           try {
-            await sendFirebaseMessage(device, oauthToken, projectId, byUser.get(device.user_id)?.streak_days ?? 0);
+            const settings = byUser.get(device.user_id);
+            await sendFirebaseMessage(device, oauthToken, projectId, settings?.streak_days ?? 0, settings?.focus_mode_enabled === true);
             await admin.from('push_devices').update({ last_nudge_at: now.toISOString() }).eq('id', device.id);
             sent.push(device.id);
           } catch (error) {

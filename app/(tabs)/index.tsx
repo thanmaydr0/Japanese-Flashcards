@@ -153,14 +153,36 @@ export default function TodayScreen() {
         </View>
 
         <Pill
-          background={state.streak > 0 ? theme.coralSoft : theme.lineSubtle}
-          color={state.streak > 0 ? theme.coral : theme.muted}
-          icon={Flame}
+          background={state.adhdModeEnabled ? theme.forestSoft : state.streak > 0 ? theme.coralSoft : theme.lineSubtle}
+          color={state.adhdModeEnabled ? theme.forest : state.streak > 0 ? theme.coral : theme.muted}
+          icon={state.adhdModeEnabled ? Target : Flame}
         >
-          {state.streak > 0 ? `${state.streak} DAY STREAK` : 'NO STREAK YET'}
+          {state.adhdModeEnabled ? 'FOCUS MODE' : state.streak > 0 ? `${state.streak} DAY STREAK` : 'NO STREAK YET'}
         </Pill>
       </View>
 
+      {state.adhdModeEnabled ? (
+        <View style={styles.focusModeContent}>
+          <Surface style={styles.focusModeCard}>
+            <Eyebrow color={theme.forest}>ONE SMALL STEP</Eyebrow>
+            <Text style={[styles.focusModeTitle, { color: theme.ink }]}>{currentLesson.title}</Text>
+            <Text style={[styles.focusModeDescription, { color: theme.muted }]}>
+              {cloudNudge ?? currentLesson.subtitle}
+            </Text>
+            <Pill background={theme.forestSoft} color={theme.forest} icon={BookOpen}>
+              A short round · 5 cards
+            </Pill>
+            <Button
+              label="Start a 5-card round"
+              onPress={openMilestone}
+              icon={ArrowRight}
+              style={styles.focusModeButton}
+            />
+            <Text style={[styles.focusModeHint, { color: theme.faint }]}>After five cards, choose to pause or do another round. Your reviews save as you go.</Text>
+          </Surface>
+        </View>
+      ) : (
+        <>
       {/* 7-Day Mini Streak Tracker */}
       <Surface style={styles.weekStreakCard}>
         <View style={styles.weekStreakHeader}>
@@ -396,6 +418,8 @@ export default function TodayScreen() {
           style={styles.focusButton}
         />
       </Surface>
+        </>
+      )}
     </Page>
   );
 }
@@ -409,6 +433,33 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 12,
+  },
+  focusModeContent: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    paddingTop: 10,
+  },
+  focusModeCard: {
+    padding: 20,
+    gap: 14,
+  },
+  focusModeTitle: {
+    fontSize: 24,
+    lineHeight: 30,
+    fontWeight: '900',
+    letterSpacing: -0.4,
+  },
+  focusModeDescription: {
+    fontSize: 15,
+    lineHeight: 22,
+  },
+  focusModeButton: {
+    width: '100%',
+    marginTop: 2,
+  },
+  focusModeHint: {
+    fontSize: 12,
+    lineHeight: 18,
   },
   brandTitle: {
     color: C.ink,

@@ -21,6 +21,7 @@ export type AnswerLog = {
 
 export type LearningState = {
   setupCompleted: boolean;
+  adhdModeEnabled: boolean;
   dailyMinutes: number;
   preferredScript: Script;
   startedAt: number | null;
@@ -36,6 +37,7 @@ export type LearningState = {
 
 export const INITIAL_STATE: LearningState = {
   setupCompleted: false,
+  adhdModeEnabled: false,
   dailyMinutes: 20,
   preferredScript: 'hiragana',
   startedAt: null,

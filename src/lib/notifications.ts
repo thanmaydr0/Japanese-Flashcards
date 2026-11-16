@@ -78,6 +78,12 @@ async function cancelStudyReminder() {
 }
 
 function reminderCopy(state: LearningState) {
+  if (state.adhdModeEnabled) {
+    return {
+      title: 'A small Japy step is ready',
+      body: 'Try one short round of five kana cards. You can stop whenever you like.',
+    };
+  }
   if (state.streak >= 7) {
     return {
       title: 'Your fox is doing a victory dance 🦊',

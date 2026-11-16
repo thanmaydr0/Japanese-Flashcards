@@ -51,8 +51,14 @@ export function AccountAndReminders() {
           <View style={styles.reminderHeader}>
             <IconTile icon={BellRing} background={theme.coralSoft} color={theme.coral} size={38} />
             <View style={styles.copy}>
-              <Text style={[styles.cardTitle, { color: theme.ink }]}>A nudge from your fox</Text>
-              <Text style={[styles.cardSub, { color: theme.muted }]}>One playful reminder on days you haven’t studied yet.</Text>
+              <Text style={[styles.cardTitle, { color: theme.ink }]}>
+                {state.adhdModeEnabled ? 'A gentle study reminder' : 'A nudge from your fox'}
+              </Text>
+              <Text style={[styles.cardSub, { color: theme.muted }]}>
+                {state.adhdModeEnabled
+                  ? 'One calm reminder at the time you choose. Reminders stay off until you enable them.'
+                  : 'One playful reminder on days you haven’t studied yet.'}
+              </Text>
             </View>
             <Switch
               accessibilityLabel="Daily Japanese study reminders"

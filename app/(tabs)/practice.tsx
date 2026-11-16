@@ -15,7 +15,7 @@ import * as Haptics from 'expo-haptics';
 import * as Speech from 'expo-speech';
 import Animated, { FadeInDown, FadeOutUp, LinearTransition, ReduceMotion } from 'react-native-reanimated';
 import { PracticeCanvas, PracticeCanvasRef } from '../../src/components/PracticeCanvas';
-import { Button, Page, Pill, ProgressBar, SegmentedControl, Surface, ui } from '../../src/components/ui';
+import { Button, Eyebrow, Page, Pill, ProgressBar, SegmentedControl, Surface, ui } from '../../src/components/ui';
 import { useLearning } from '../../src/context/LearningContext';
 import { useTheme } from '../../src/context/ThemeContext';
 import { KanaCard, Script, WordCard } from '../../src/data/kana';
@@ -43,7 +43,7 @@ const CARD_EXIT = FadeOutUp.duration(120).reduceMotion(ReduceMotion.System);
 const LAYOUT_MOTION = LinearTransition.duration(160).reduceMotion(ReduceMotion.System);
 
 export default function PracticeScreen() {
-  const { state, gradeCard, setPreferredScript } = useLearning();
+  const { state, gradeCard, setPreferredScript, adhdModeRevision } = useLearning();
   const { theme } = useTheme();
   const { lesson: lessonParam } = useLocalSearchParams<{ lesson?: string }>();
   const lessonId = Array.isArray(lessonParam) ? lessonParam[0] : lessonParam;
@@ -57,6 +57,11 @@ export default function PracticeScreen() {
   const [showHint, setShowHint] = useState(false);
   const [strokeCount, setStrokeCount] = useState(0);
   const [resetSignal, setResetSignal] = useState(0);
+  const [focusRound, setFocusRound] = useState({ revision: adhdModeRevision, count: 0, complete: false, paused: false });
+  const [showPracticeOptions, setShowPracticeOptions] = useState(false);
+  const activeFocusRound = focusRound.revision === adhdModeRevision
+    ? focusRound
+    : { revision: adhdModeRevision, count: 0, complete: false, paused: false };
 
   const canvasRef = useRef<PracticeCanvasRef>(null);
 
@@ -88,7 +93,25 @@ export default function PracticeScreen() {
   const character = cardCharacter(card);
   const word = isWordCard(card);
   const answer = card.romaji;
-  const progressLine = Math.min(100, ((state.totalAnswers % 10) + 1) * 10);
+  const progressLine = state.adhdModeEnabled
+    ? Math.min(100, Math.round((activeFocusRound.count / 5) * 100))
+    : Math.min(100, ((state.totalAnswers % 10) + 1) * 10);
+
+  const advanceFocusRound = () => {
+    setFocusRound((previous) => {
+      const current = previous.revision === adhdModeRevision
+        ? previous
+        : { revision: adhdModeRevision, count: 0, complete: false, paused: false };
+      const count = current.count + 1;
+      return { ...current, count, complete: count >= 5 };
+    });
+  };
+
+  const startAnotherRound = () => {
+    setFocusRound({ revision: adhdModeRevision, count: 0, complete: false, paused: false });
+  };
+
+  const returnToToday = () => router.navigate('/(tabs)/index' as never);
 
   const handleStrokeCount = useCallback((count: number) => {
     setStrokeCount(count);
@@ -121,6 +144,7 @@ export default function PracticeScreen() {
       correct ? Haptics.NotificationFeedbackType.Success : Haptics.NotificationFeedbackType.Warning
     );
     gradeCard(card, mode, correct);
+    if (state.adhdModeEnabled) advanceFocusRound();
     setRevealedCardId(null);
     setStrokeCount(0);
     setResetSignal((v) => v + 1);
@@ -143,6 +167,41 @@ export default function PracticeScreen() {
 
   return (
     <Page contentStyle={styles.page}>
+      {state.adhdModeEnabled && (activeFocusRound.complete || activeFocusRound.paused) ? (
+        <Surface style={styles.focusRoundCard}>
+          <Eyebrow color={theme.forest}>{activeFocusRound.paused ? 'PAUSED' : 'ROUND COMPLETE'}</Eyebrow>
+          <Text style={[styles.focusRoundTitle, { color: theme.ink }]}>
+            {activeFocusRound.paused ? 'Your progress is saved.' : 'That was five cards.'}
+          </Text>
+          <Text style={[styles.focusRoundDescription, { color: theme.muted }]}>
+            {activeFocusRound.paused
+              ? 'Take the time you need. You can start another short round whenever you are ready.'
+              : 'Pause here or choose another short round. There is no need to rush.'}
+          </Text>
+          <Button
+            label={activeFocusRound.paused ? 'Start another 5-card round' : 'Continue with 5 more'}
+            onPress={startAnotherRound}
+            icon={Check}
+            style={styles.focusRoundAction}
+          />
+          {!activeFocusRound.paused ? (
+            <Button
+              label="Pause for now"
+              onPress={() => setFocusRound({ ...activeFocusRound, paused: true })}
+              variant="outline"
+              style={styles.focusRoundAction}
+            />
+          ) : (
+            <Button
+              label="Back to Today"
+              onPress={returnToToday}
+              variant="outline"
+              style={styles.focusRoundAction}
+            />
+          )}
+        </Surface>
+      ) : (
+      <>
       {/* Top Navigation & Mode Switcher Bar */}
       <View style={styles.navBar}>
         {lesson ? (
@@ -157,17 +216,26 @@ export default function PracticeScreen() {
           </Pressable>
         ) : null}
 
-        <SegmentedControl<StudyMode>
-          style={styles.modeSegment}
-          value={mode}
-          onChange={chooseMode}
-          options={[
-            { value: 'read', label: 'Read & Recall' },
-            { value: 'write', label: 'Write Stroke' },
-          ]}
-        />
+        {state.adhdModeEnabled ? (
+          <View style={styles.focusRoundBadge}>
+            <Text style={[styles.focusRoundBadgeTitle, { color: theme.ink }]}>Short round</Text>
+            <Text style={[styles.focusRoundBadgeText, { color: theme.muted }]}>{activeFocusRound.count} of 5 done</Text>
+          </View>
+        ) : null}
 
-        {scriptOptions.length > 1 ? (
+        {!state.adhdModeEnabled || showPracticeOptions ? (
+          <SegmentedControl<StudyMode>
+            style={styles.modeSegment}
+            value={mode}
+            onChange={chooseMode}
+            options={[
+              { value: 'read', label: 'Read & Recall' },
+              { value: 'write', label: 'Write Stroke' },
+            ]}
+          />
+        ) : null}
+
+        {(!state.adhdModeEnabled || showPracticeOptions) && scriptOptions.length > 1 ? (
           <View style={[styles.scriptSelector, { backgroundColor: theme.lineSubtle, borderColor: theme.line }]}>
             {scriptOptions.map((opt) => (
               <Pressable
@@ -190,15 +258,29 @@ export default function PracticeScreen() {
             ))}
           </View>
         ) : null}
+
+        {state.adhdModeEnabled ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityState={{ expanded: showPracticeOptions }}
+            accessibilityLabel={showPracticeOptions ? 'Hide practice options' : 'Show practice options'}
+            onPress={() => setShowPracticeOptions((visible) => !visible)}
+            style={[styles.optionsButton, { borderColor: theme.line, backgroundColor: theme.lineSubtle }]}
+          >
+            <Text style={[styles.optionsButtonText, { color: theme.ink }]}>{showPracticeOptions ? 'Hide' : 'Options'}</Text>
+          </Pressable>
+        ) : null}
       </View>
 
       {/* Progress Strip */}
       <View style={styles.progressRow}>
         <View style={styles.progressTextRow}>
           <Text style={[styles.progressLabel, { color: theme.muted }]}>
-            {lesson ? lesson.title.toUpperCase() : mode === 'read' ? 'RECALL SESSION' : 'WRITING PRACTICE'}
+            {state.adhdModeEnabled ? 'ONE SHORT ROUND' : lesson ? lesson.title.toUpperCase() : mode === 'read' ? 'RECALL SESSION' : 'WRITING PRACTICE'}
           </Text>
-          <Text style={[styles.progressCount, { color: theme.faint }]}>{state.totalAnswers} completed</Text>
+          <Text style={[styles.progressCount, { color: theme.faint }]}>
+            {state.adhdModeEnabled ? `Card ${Math.min(activeFocusRound.count + 1, 5)} of 5` : `${state.totalAnswers} completed`}
+          </Text>
         </View>
         <ProgressBar value={progressLine} color={theme.forest} height={4} />
       </View>
@@ -478,6 +560,8 @@ export default function PracticeScreen() {
           </Surface>
         </Animated.View>
       )}
+      </>
+      )}
     </Page>
   );
 }
@@ -492,6 +576,46 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: 8,
     marginBottom: 12,
+  },
+  focusRoundBadge: {
+    flex: 1,
+    gap: 1,
+  },
+  focusRoundBadgeTitle: {
+    fontSize: 13,
+    fontWeight: '800',
+  },
+  focusRoundBadgeText: {
+    fontSize: 10,
+    fontWeight: '600',
+  },
+  optionsButton: {
+    minHeight: 36,
+    borderWidth: 1,
+    borderRadius: R.sm,
+    justifyContent: 'center',
+    paddingHorizontal: 9,
+  },
+  optionsButtonText: {
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  focusRoundCard: {
+    marginTop: 20,
+    padding: 22,
+    gap: 14,
+  },
+  focusRoundTitle: {
+    fontSize: 23,
+    lineHeight: 30,
+    fontWeight: '900',
+  },
+  focusRoundDescription: {
+    fontSize: 14,
+    lineHeight: 21,
+  },
+  focusRoundAction: {
+    width: '100%',
   },
   backButton: {
     flexDirection: 'row',
