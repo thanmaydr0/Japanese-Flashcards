@@ -10,7 +10,6 @@ import {
   X,
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
-import * as Speech from 'expo-speech';
 import {
   Button,
   Page,
@@ -23,6 +22,7 @@ import {
 import { KANA_CARDS, KanaCard, KanaKind, Script, WORD_CARDS } from '../../src/data/kana';
 import { useLearning } from '../../src/context/LearningContext';
 import { useTheme } from '../../src/context/ThemeContext';
+import { useJapaneseSpeech } from '../../src/hooks/useJapaneseSpeech';
 import { getMastery } from '../../src/lib/learning';
 import { C, R, S } from '../../src/theme';
 
@@ -76,6 +76,7 @@ const YOON_ROWS: { label: string; sounds: string[] }[] = [
 export default function KanaChartScreen() {
   const { state, setPreferredScript } = useLearning();
   const { theme } = useTheme();
+  const { speak: speakJapanese } = useJapaneseSpeech();
   const [script, setScript] = useState<Script>(state.preferredScript);
   const [kind, setKind] = useState<KanaKind>('basic');
   const [query, setQuery] = useState('');
@@ -92,7 +93,7 @@ export default function KanaChartScreen() {
 
   const speak = (card: KanaCard) => {
     void Haptics.selectionAsync();
-    Speech.speak(card.character, { language: 'ja-JP', rate: 0.78 });
+    void speakJapanese(card.character);
   };
 
   const scriptCards = useMemo(

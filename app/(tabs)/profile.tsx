@@ -13,7 +13,6 @@ import {
   Volume2,
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
-import * as Speech from 'expo-speech';
 import { AccountAndReminders } from '../../src/components/AccountAndReminders';
 import {
   Button,
@@ -28,6 +27,7 @@ import {
 } from '../../src/components/ui';
 import { useTheme } from '../../src/context/ThemeContext';
 import { useLearning } from '../../src/context/LearningContext';
+import { useJapaneseSpeech } from '../../src/hooks/useJapaneseSpeech';
 import { accuracyPercent, getPlanEstimate, masteryCounts } from '../../src/lib/learning';
 import { supabaseConfigured } from '../../src/lib/supabase';
 import { C, R } from '../../src/theme';
@@ -41,6 +41,7 @@ function localKey(date: Date) {
 export default function PaceScreen() {
   const { state, changeDailyMinutes, resetProgress, setAdhdModeEnabled } = useLearning();
   const { theme, isDark } = useTheme();
+  const { speak: speakJapanese, isPreparing: isPreparingVoice } = useJapaneseSpeech();
   const [confirmReset, setConfirmReset] = useState(false);
   const counts = masteryCounts(state);
   const estimate = getPlanEstimate(state);
@@ -48,7 +49,7 @@ export default function PaceScreen() {
 
   const testVoice = () => {
     void Haptics.selectionAsync();
-    Speech.speak('こんにちは、日本語の勉強を始めましょう', { language: 'ja-JP', rate: 0.8 });
+    void speakJapanese('こんにちは、日本語の勉強を始めましょう');
   };
 
   const handleReset = () => {
@@ -261,12 +262,13 @@ export default function PaceScreen() {
             <View style={{ flex: 1 }}>
               <Text style={[styles.utilityTitle, { color: theme.ink }]}>Japanese Pronunciation Engine</Text>
               <Text style={[styles.utilitySub, { color: theme.muted }]}>
-                Powered by native ja-JP text-to-speech synthesis
+                Powered by ElevenLabs Japanese speech with your selected voice
               </Text>
             </View>
           </View>
           <Button
-            label="Test Audio"
+            label={isPreparingVoice ? 'Loading audio…' : 'Test Audio'}
+            disabled={isPreparingVoice}
             onPress={testVoice}
             variant="outline"
             icon={Volume2}

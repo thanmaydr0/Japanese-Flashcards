@@ -87,7 +87,7 @@ export default function WelcomeScreen() {
           ))}
         </View>
         <Text style={[styles.showcaseText, { color: theme.muted }]}>
-          Traditional calligraphy grid · Spaced-repetition recall · Native pronunciation
+          Traditional calligraphy grid · Spaced-repetition recall · ElevenLabs pronunciation
         </Text>
       </Surface>
 

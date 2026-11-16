@@ -393,3 +393,8 @@ entrypoint = "./functions/practice-coach/index.ts"
 enabled = true
 verify_jwt = false
 entrypoint = "./functions/daily-study-nudges/index.ts"
+
+[functions.japanese-audio]
+enabled = true
+verify_jwt = true
+entrypoint = "./functions/japanese-audio/index.ts"

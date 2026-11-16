@@ -12,7 +12,7 @@
     },
     "android": {
       "package": "com.thanmaydr1.kanapath",
-      "versionCode": 7,
+      "versionCode": 8,
       "googleServicesFile": "./google-services.json",
       "icon": "./assets/kana-path-icon.png",
       "adaptiveIcon": {
@@ -36,6 +36,15 @@
         }
       ],
       "expo-web-browser",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": false,
+          "recordAudioAndroid": false,
+          "enableBackgroundRecording": false,
+          "enableBackgroundPlayback": false
+        }
+      ],
       [
         "expo-quick-actions/icon/plugin",
         {
@@ -64,7 +73,8 @@
           "resizeMode": "contain",
           "backgroundColor": "#F8FAFC"
         }
-      ]
+      ],
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true

@@ -23,6 +23,8 @@ Scan the QR code with Expo Go, or press `w` in the Expo terminal to open the web
 
 The Supabase project `kana-path` is provisioned in Mumbai (`ap-south-1`). Its schema is in `supabase/migrations/`, and the `practice-coach` Edge Function provides short, personalized study nudges using Gemini. Store `GEMINI_API_KEY` as a Supabase function secret; never put it in an `EXPO_PUBLIC_` variable or commit `.env.local` or `supabase/functions/.env`.
 
+Japanese pronunciation uses the `japanese-audio` Edge Function to proxy ElevenLabs text-to-speech. Add `ELEVENLABS_API_KEY` under Supabase **Edge Functions → Secrets**. The key stays server-side; the function uses voice ID `6KjeF79VZF00h2NU8wKp` and the Eleven Multilingual v2 model. Audio is generated when the learner taps a pronunciation button.
+
 After adding your Gemini key, set it on the linked Supabase project with `supabase secrets set GEMINI_API_KEY=your-key --project-ref amguklanangicorojrbc`, then redeploy the function. The function uses `gemini-3.8-flash` by default; override it with a `GEMINI_MODEL` function secret when needed.
 
 Apply later migrations and redeploy the function with:

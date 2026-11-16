@@ -12,12 +12,12 @@ import {
   Volume2,
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
-import * as Speech from 'expo-speech';
 import Animated, { FadeInDown, FadeOutUp, LinearTransition, ReduceMotion } from 'react-native-reanimated';
 import { PracticeCanvas, PracticeCanvasRef } from '../../src/components/PracticeCanvas';
 import { Button, Eyebrow, Page, Pill, ProgressBar, SegmentedControl, Surface, ui } from '../../src/components/ui';
 import { useLearning } from '../../src/context/LearningContext';
 import { useTheme } from '../../src/context/ThemeContext';
+import { useJapaneseSpeech } from '../../src/hooks/useJapaneseSpeech';
 import { KanaCard, Script, WordCard } from '../../src/data/kana';
 import {
   cardCharacter,
@@ -45,6 +45,7 @@ const LAYOUT_MOTION = LinearTransition.duration(160).reduceMotion(ReduceMotion.S
 export default function PracticeScreen() {
   const { state, gradeCard, setPreferredScript, adhdModeRevision } = useLearning();
   const { theme } = useTheme();
+  const { speak: speakJapanese } = useJapaneseSpeech();
   const { lesson: lessonParam } = useLocalSearchParams<{ lesson?: string }>();
   const lessonId = Array.isArray(lessonParam) ? lessonParam[0] : lessonParam;
   const lesson = LEARNING_PATH.find((entry) => entry.id === lessonId);
@@ -136,7 +137,7 @@ export default function PracticeScreen() {
 
   const speak = () => {
     void Haptics.selectionAsync();
-    Speech.speak(character, { language: 'ja-JP', rate: 0.78, pitch: 1.0 });
+    void speakJapanese(character);
   };
 
   const grade = (correct: boolean) => {
