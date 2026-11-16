@@ -1,4 +1,5 @@
 import * as AppIcon from 'expo-quick-actions/icon';
+import { Platform } from 'react-native';
 
 function dayKey(date: Date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
@@ -88,6 +89,9 @@ export function iconForStreak(streak: number): DynamicIconName {
 }
 
 export async function syncStreakIcon(streak: number) {
+  // Android closes the app to apply launcher icon aliases. Keep its icon static
+  // so automatic startup synchronization cannot close the app during launch.
+  if (Platform.OS === 'android') return;
   if (!AppIcon.isSupported || !AppIcon.getIcon || !AppIcon.setIcon) return;
   const nextIcon = iconForStreak(streak);
   const currentIcon = await AppIcon.getIcon();
@@ -102,6 +106,7 @@ export async function syncDynamicMascotIcon(
   now = new Date(),
   manualOverride?: MascotMood | null
 ) {
+  if (Platform.OS === 'android') return;
   if (!AppIcon.isSupported || !AppIcon.getIcon || !AppIcon.setIcon) return;
   const nextIcon = manualOverride
     ? manualOverride === 'default'

@@ -2,7 +2,7 @@
   "expo": {
     "name": "Japy",
     "slug": "kana-path",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "scheme": "kanapath",
     "icon": "./assets/kana-path-icon.png",
@@ -12,7 +12,7 @@
     },
     "android": {
       "package": "com.thanmaydr1.kanapath",
-      "versionCode": 4,
+      "versionCode": 5,
       "googleServicesFile": "./google-services.json",
       "icon": "./assets/kana-path-icon.png",
       "adaptiveIcon": {

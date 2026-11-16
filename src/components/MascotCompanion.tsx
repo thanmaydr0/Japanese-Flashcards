@@ -139,7 +139,7 @@ export function MascotCompanion() {
       {/* Mood Selector Strip */}
       <View style={[styles.selectorBar, { borderTopColor: theme.lineSubtle }]}>
         <Text style={[styles.selectorHeading, { color: theme.faint }]}>
-          DAILY MOOD & DYNAMIC ICON:
+          DAILY MOOD:
         </Text>
         <View style={styles.chipRow}>
           {MOOD_DATA.map((item) => {
